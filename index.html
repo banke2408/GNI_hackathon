@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeloSync — Campus Micro-Mobility & Shared Bike Fleet Dashboard</title>
+    <meta name="description" content="VeloSync: Real-time campus bike fleet management dashboard with live GPS tracking, NFC unlock, rebalancing intelligence, and usage analytics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="url(#brandGrad)" stroke-width="2.5"/>
+                    <circle cx="16" cy="16" r="6" fill="url(#brandGrad)"/>
+                    <path d="M16 2 L16 8 M16 24 L16 30 M2 16 L8 16 M24 16 L30 16" stroke="url(#brandGrad)" stroke-width="1.5" stroke-linecap="round"/>
+                    <defs>
+                        <linearGradient id="brandGrad" x1="0" y1="0" x2="32" y2="32">
+                            <stop offset="0%" stop-color="#00E5A0"/>
+                            <stop offset="100%" stop-color="#00B4D8"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <span class="brand-name">VeloSync</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+                <span class="material-icons-round">dashboard</span>
+                <span class="nav-label">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="map" id="nav-map">
+                <span class="material-icons-round">map</span>
+                <span class="nav-label">Live Map</span>
+            </a>
+            <a href="#" class="nav-item" data-page="fleet" id="nav-fleet">
+                <span class="material-icons-round">pedal_bike</span>
+                <span class="nav-label">Fleet</span>
+            </a>
+            <a href="#" class="nav-item" data-page="telemetry" id="nav-telemetry">
+                <span class="material-icons-round">speed</span>
+                <span class="nav-label">Telemetry</span>
+            </a>
+            <a href="#" class="nav-item" data-page="rebalance" id="nav-rebalance">
+                <span class="material-icons-round">swap_horiz</span>
+                <span class="nav-label">Rebalance</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics" id="nav-analytics">
+                <span class="material-icons-round">analytics</span>
+                <span class="nav-label">Analytics</span>
+            </a>
+            <a href="#" class="nav-item" data-page="history" id="nav-history">
+                <span class="material-icons-round">history</span>
+                <span class="nav-label">Ride History</span>
+            </a>
+            <a href="#" class="nav-item" data-page="prototype" id="nav-prototype">
+                <span class="material-icons-round">memory</span>
+                <span class="nav-label">5-Bike Prototype</span>
+            </a>
+            <a href="#" class="nav-item" data-page="docs" id="nav-docs">
+                <span class="material-icons-round">menu_book</span>
+                <span class="nav-label">Docs &amp; Tests</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="signal-status">
+                <span class="signal-dot online"></span>
+                <span class="signal-text">All Systems Online</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle">
+                <span class="material-icons-round">menu</span>
+            </button>
+            <div class="topbar-title">
+                <h1 id="page-title">Fleet Overview</h1>
+                <span class="topbar-subtitle" id="page-subtitle">Campus Micro-Mobility Dashboard</span>
+            </div>
+            <div class="topbar-actions">
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    LIVE
+                </div>
+                <button class="topbar-btn" id="notificationBtn" title="Notifications">
+                    <span class="material-icons-round">notifications</span>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="topbar-btn" id="settingsBtn" title="Settings">
+                    <span class="material-icons-round">settings</span>
+                </button>
+                <div class="user-avatar" title="Admin">AD</div>
+            </div>
+        </header>
+
+        <!-- ============================================ -->
+        <!-- DASHBOARD PAGE -->
+        <!-- ============================================ -->
+        <section class="page active" id="page-dashboard">
+            <!-- KPI Cards Row -->
+            <div class="kpi-grid">
+                <div class="kpi-card" id="kpi-total">
+                    <div class="kpi-icon-wrap green">
+                        <span class="material-icons-round">pedal_bike</span>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-value" data-count="42">0</span>
+                        <span class="kpi-label">Total Bikes</span>
+                    </div>
+                    <div class="kpi-trend up">
+                        <span class="material-icons-round">trending_up</span> +5
+                    </div>
+                </div>
+                <div class="kpi-card" id="kpi-active">
+                    <div class="kpi-icon-wrap blue">
+                        <span class="material-icons-round">directions_bike</span>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-value" data-count="18">0</span>
+                        <span class="kpi-label">Active Rides</span>
+                    </div>
+                    <div class="kpi-trend up">
+                        <span class="material-icons-round">trending_up</span> +12%
+                    </div>
+                </div>
+                <div class="kpi-card" id="kpi-available">
+                    <div class="kpi-icon-wrap cyan">
+                        <span class="material-icons-round">check_circle</span>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-value" data-count="21">0</span>
+                        <span class="kpi-label">Available</span>
+                    </div>
+                    <div class="kpi-trend neutral">
+                        <span class="material-icons-round">trending_flat</span> Stable
+                    </div>
+                </div>
+                <div class="kpi-card" id="kpi-maintenance">
+                    <div class="kpi-icon-wrap orange">
+                        <span class="material-icons-round">build</span>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-value" data-count="3">0</span>
+                        <span class="kpi-label">Maintenance</span>
+                    </div>
+                    <div class="kpi-trend down">
+                        <span class="material-icons-round">trending_down</span> -2
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Live Campus Map -->
+                <div class="card card-map" id="dashboard-map-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">location_on</span>
+                            Live Campus Map
+                        </h2>
+                        <div class="card-actions">
+                            <span class="chip active">All Bikes</span>
+                            <span class="chip">Available</span>
+                            <span class="chip">In-use</span>
+                        </div>
+                    </div>
+                    <div class="card-body map-container" id="dashboardMapContainer">
+                        <div class="campus-map">
+                            <!-- SVG Campus Map -->
+                            <svg viewBox="0 0 800 500" class="map-svg" id="campusMapSVG">
+                                <!-- Background -->
+                                <rect width="800" height="500" fill="#0a1628" rx="12"/>
+                                
+                                <!-- Grid lines -->
+                                <g stroke="#1a2d4a" stroke-width="0.5" opacity="0.3">
+                                    <line x1="0" y1="100" x2="800" y2="100"/>
+                                    <line x1="0" y1="200" x2="800" y2="200"/>
+                                    <line x1="0" y1="300" x2="800" y2="300"/>
+                                    <line x1="0" y1="400" x2="800" y2="400"/>
+                                    <line x1="160" y1="0" x2="160" y2="500"/>
+                                    <line x1="320" y1="0" x2="320" y2="500"/>
+                                    <line x1="480" y1="0" x2="480" y2="500"/>
+                                    <line x1="640" y1="0" x2="640" y2="500"/>
+                                </g>
+                                
+                                <!-- Roads -->
+                                <g stroke="#1e3a5f" stroke-width="3" fill="none" opacity="0.6">
+                                    <path d="M50,250 L750,250"/>
+                                    <path d="M400,30 L400,470"/>
+                                    <path d="M150,100 L650,100"/>
+                                    <path d="M150,400 L650,400"/>
+                                    <path d="M200,100 L200,400"/>
+                                    <path d="M600,100 L600,400"/>
+                                </g>
+
+                                <!-- Campus Buildings -->
+                                <g class="buildings">
+                                    <rect x="100" y="130" width="80" height="50" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="140" y="160" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Library</text>
+                                    
+                                    <rect x="250" y="50" width="100" height="40" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="300" y="75" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Science Block</text>
+                                    
+                                    <rect x="450" y="130" width="120" height="50" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="510" y="160" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Engineering</text>
+                                    
+                                    <rect x="620" y="200" width="80" height="60" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="660" y="235" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Hostel A</text>
+                                    
+                                    <rect x="100" y="300" width="90" height="60" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="145" y="335" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Sports</text>
+                                    
+                                    <rect x="300" y="300" width="80" height="50" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="340" y="330" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Cafeteria</text>
+
+                                    <rect x="500" y="340" width="100" height="50" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="550" y="370" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Admin Block</text>
+
+                                    <rect x="300" y="170" width="60" height="40" rx="4" fill="#162640" stroke="#2a4a6b" stroke-width="1"/>
+                                    <text x="330" y="195" text-anchor="middle" fill="#4a7a9b" font-size="9" font-family="Inter">Auditorium</text>
+                                </g>
+
+                                <!-- Bike Dock Stations -->
+                                <g class="dock-stations">
+                                    <!-- Station 1 - Library -->
+                                    <circle cx="145" cy="200" r="16" fill="none" stroke="#00E5A0" stroke-width="1.5" opacity="0.3" class="dock-ring"/>
+                                    <circle cx="145" cy="200" r="8" fill="#00E5A0" class="dock-point" data-station="Library Dock" data-bikes="5" data-capacity="8"/>
+                                    <text x="145" y="225" text-anchor="middle" fill="#00E5A0" font-size="8" font-family="Inter" font-weight="600">5/8</text>
+                                    
+                                    <!-- Station 2 - Engineering -->
+                                    <circle cx="510" cy="200" r="16" fill="none" stroke="#00E5A0" stroke-width="1.5" opacity="0.3" class="dock-ring"/>
+                                    <circle cx="510" cy="200" r="8" fill="#00E5A0" class="dock-point" data-station="Eng. Dock" data-bikes="3" data-capacity="8"/>
+                                    <text x="510" y="225" text-anchor="middle" fill="#00E5A0" font-size="8" font-family="Inter" font-weight="600">3/8</text>
+
+                                    <!-- Station 3 - Cafeteria -->
+                                    <circle cx="340" cy="280" r="16" fill="none" stroke="#FFB800" stroke-width="1.5" opacity="0.3" class="dock-ring"/>
+                                    <circle cx="340" cy="280" r="8" fill="#FFB800" class="dock-point" data-station="Café Dock" data-bikes="7" data-capacity="8"/>
+                                    <text x="340" y="305" text-anchor="middle" fill="#FFB800" font-size="8" font-family="Inter" font-weight="600">7/8</text>
+
+                                    <!-- Station 4 - Hostel -->
+                                    <circle cx="660" cy="280" r="16" fill="none" stroke="#FF4D6A" stroke-width="1.5" opacity="0.3" class="dock-ring"/>
+                                    <circle cx="660" cy="280" r="8" fill="#FF4D6A" class="dock-point" data-station="Hostel Dock" data-bikes="2" data-capacity="10"/>
+                                    <text x="660" y="305" text-anchor="middle" fill="#FF4D6A" font-size="8" font-family="Inter" font-weight="600">2/10</text>
+
+                                    <!-- Station 5 - Sports -->
+                                    <circle cx="145" cy="380" r="16" fill="none" stroke="#00E5A0" stroke-width="1.5" opacity="0.3" class="dock-ring"/>
+                                    <circle cx="145" cy="380" r="8" fill="#00E5A0" class="dock-point" data-station="Sports Dock" data-bikes="4" data-capacity="6"/>
+                                    <text x="145" y="405" text-anchor="middle" fill="#00E5A0" font-size="8" font-family="Inter" font-weight="600">4/6</text>
+                                </g>
+
+                                <!-- Active Bike Riders (animated) -->
+                                <g class="active-riders">
+                                    <circle cx="250" cy="250" r="5" fill="#00B4D8" class="rider-dot" id="rider1">
+                                        <animateMotion dur="8s" repeatCount="indefinite" path="M0,0 Q50,-30 100,-10 Q150,20 200,0"/>
+                                    </circle>
+                                    <circle cx="450" cy="180" r="5" fill="#00B4D8" class="rider-dot" id="rider2">
+                                        <animateMotion dur="12s" repeatCount="indefinite" path="M0,0 Q-30,50 10,100 Q50,80 0,150"/>
+                                    </circle>
+                                    <circle cx="350" cy="350" r="5" fill="#00B4D8" class="rider-dot" id="rider3">
+                                        <animateMotion dur="10s" repeatCount="indefinite" path="M0,0 L80,-40 L160,20 L80,60 Z"/>
+                                    </circle>
+                                </g>
+                            </svg>
+                            
+                            <!-- Map Legend -->
+                            <div class="map-legend">
+                                <div class="legend-item"><span class="legend-dot" style="background:#00E5A0"></span> Available Dock</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#FFB800"></span> Near Full</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#FF4D6A"></span> Low Stock</div>
+                                <div class="legend-item"><span class="legend-dot" style="background:#00B4D8"></span> Active Rider</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fleet Status Panel -->
+                <div class="card card-fleet-status">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">pie_chart</span>
+                            Fleet Status
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="donut-chart-container">
+                            <canvas id="fleetDonutChart" width="220" height="220"></canvas>
+                            <div class="donut-center">
+                                <span class="donut-value">42</span>
+                                <span class="donut-label">Total</span>
+                            </div>
+                        </div>
+                        <div class="fleet-legend">
+                            <div class="fleet-legend-item">
+                                <span class="fleet-dot" style="background:#00E5A0"></span>
+                                <span class="fleet-label">Available</span>
+                                <span class="fleet-count">21</span>
+                            </div>
+                            <div class="fleet-legend-item">
+                                <span class="fleet-dot" style="background:#00B4D8"></span>
+                                <span class="fleet-label">In Use</span>
+                                <span class="fleet-count">18</span>
+                            </div>
+                            <div class="fleet-legend-item">
+                                <span class="fleet-dot" style="background:#FFB800"></span>
+                                <span class="fleet-label">Maintenance</span>
+                                <span class="fleet-count">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Graph -->
+                <div class="card card-usage">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">show_chart</span>
+                            Usage Trends
+                        </h2>
+                        <div class="card-actions">
+                            <select class="time-select" id="usagePeriod">
+                                <option value="today">Today</option>
+                                <option value="week" selected>This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="usageChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Rebalance Suggestions -->
+                <div class="card card-rebalance">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">swap_horiz</span>
+                            Rebalancing Suggestions
+                        </h2>
+                        <span class="badge-count">3 Active</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="rebalance-list" id="rebalanceList">
+                            <div class="rebalance-item priority-high">
+                                <div class="rebalance-priority">
+                                    <span class="priority-dot high"></span>
+                                    HIGH
+                                </div>
+                                <div class="rebalance-route">
+                                    <div class="route-from">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Café Dock</strong>
+                                            <small>7/8 bikes — Overflow risk</small>
+                                        </div>
+                                    </div>
+                                    <div class="route-arrow">
+                                        <span class="material-icons-round">east</span>
+                                        <small>Move 3</small>
+                                    </div>
+                                    <div class="route-to">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Hostel Dock</strong>
+                                            <small>2/10 bikes — Low stock</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-action" onclick="executeRebalance(this)">Execute</button>
+                            </div>
+                            <div class="rebalance-item priority-medium">
+                                <div class="rebalance-priority">
+                                    <span class="priority-dot medium"></span>
+                                    MEDIUM
+                                </div>
+                                <div class="rebalance-route">
+                                    <div class="route-from">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Library Dock</strong>
+                                            <small>5/8 bikes</small>
+                                        </div>
+                                    </div>
+                                    <div class="route-arrow">
+                                        <span class="material-icons-round">east</span>
+                                        <small>Move 2</small>
+                                    </div>
+                                    <div class="route-to">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Eng. Dock</strong>
+                                            <small>3/8 bikes</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-action" onclick="executeRebalance(this)">Execute</button>
+                            </div>
+                            <div class="rebalance-item priority-low">
+                                <div class="rebalance-priority">
+                                    <span class="priority-dot low"></span>
+                                    LOW
+                                </div>
+                                <div class="rebalance-route">
+                                    <div class="route-from">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Sports Dock</strong>
+                                            <small>4/6 bikes</small>
+                                        </div>
+                                    </div>
+                                    <div class="route-arrow">
+                                        <span class="material-icons-round">east</span>
+                                        <small>Move 1</small>
+                                    </div>
+                                    <div class="route-to">
+                                        <span class="material-icons-round">place</span>
+                                        <div>
+                                            <strong>Admin Dock</strong>
+                                            <small>1/4 bikes</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-action" onclick="executeRebalance(this)">Execute</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Feed -->
+                <div class="card card-activity">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">history</span>
+                            Recent Activity
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-feed" id="activityFeed">
+                            <div class="activity-item">
+                                <div class="activity-icon unlock">
+                                    <span class="material-icons-round">lock_open</span>
+                                </div>
+                                <div class="activity-info">
+                                    <strong>Bike #VS-017 unlocked</strong>
+                                    <span>NFC tap at Library Dock • Student ID: 2024CS042</span>
+                                </div>
+                                <span class="activity-time">2 min ago</span>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon return">
+                                    <span class="material-icons-round">lock</span>
+                                </div>
+                                <div class="activity-info">
+                                    <strong>Bike #VS-009 returned</strong>
+                                    <span>Docked at Engineering • Duration: 23 min</span>
+                                </div>
+                                <span class="activity-time">8 min ago</span>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon alert">
+                                    <span class="material-icons-round">warning</span>
+                                </div>
+                                <div class="activity-info">
+                                    <strong>Low GPS signal — Bike #VS-031</strong>
+                                    <span>Last known: Near Admin Block • Signal retry in progress</span>
+                                </div>
+                                <span class="activity-time">15 min ago</span>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon maintenance">
+                                    <span class="material-icons-round">build</span>
+                                </div>
+                                <div class="activity-info">
+                                    <strong>Maintenance complete — Bike #VS-005</strong>
+                                    <span>Brake pads replaced • Cleared for use</span>
+                                </div>
+                                <span class="activity-time">42 min ago</span>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon unlock">
+                                    <span class="material-icons-round">lock_open</span>
+                                </div>
+                                <div class="activity-info">
+                                    <strong>Bike #VS-022 unlocked</strong>
+                                    <span>NFC tap at Hostel Dock • Student ID: 2023ME019</span>
+                                </div>
+                                <span class="activity-time">58 min ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotspot Heatmap -->
+                <div class="card card-hotspot">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">whatshot</span>
+                            Demand Hotspots
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="hotspot-bars">
+                            <div class="hotspot-row">
+                                <span class="hotspot-name">Library</span>
+                                <div class="hotspot-bar-track">
+                                    <div class="hotspot-bar-fill" style="width:85%" data-percent="85"></div>
+                                </div>
+                                <span class="hotspot-value">85%</span>
+                            </div>
+                            <div class="hotspot-row">
+                                <span class="hotspot-name">Cafeteria</span>
+                                <div class="hotspot-bar-track">
+                                    <div class="hotspot-bar-fill" style="width:72%" data-percent="72"></div>
+                                </div>
+                                <span class="hotspot-value">72%</span>
+                            </div>
+                            <div class="hotspot-row">
+                                <span class="hotspot-name">Engineering</span>
+                                <div class="hotspot-bar-track">
+                                    <div class="hotspot-bar-fill" style="width:68%" data-percent="68"></div>
+                                </div>
+                                <span class="hotspot-value">68%</span>
+                            </div>
+                            <div class="hotspot-row">
+                                <span class="hotspot-name">Hostel</span>
+                                <div class="hotspot-bar-track">
+                                    <div class="hotspot-bar-fill" style="width:91%" data-percent="91"></div>
+                                </div>
+                                <span class="hotspot-value">91%</span>
+                            </div>
+                            <div class="hotspot-row">
+                                <span class="hotspot-name">Sports</span>
+                                <div class="hotspot-bar-track">
+                                    <div class="hotspot-bar-fill" style="width:45%" data-percent="45"></div>
+                                </div>
+                                <span class="hotspot-value">45%</span>
+                            </div>
+                        </div>
+                        <p class="hotspot-note">Demand based on last 7 days unlock frequency</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- LIVE MAP PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-map">
+            <div class="full-map-wrapper">
+                <div class="map-controls">
+                    <button class="map-ctrl-btn active" id="mapShowAll"><span class="material-icons-round">select_all</span> All</button>
+                    <button class="map-ctrl-btn" id="mapShowAvailable"><span class="material-icons-round">check_circle</span> Available</button>
+                    <button class="map-ctrl-btn" id="mapShowRiding"><span class="material-icons-round">directions_bike</span> In-Use</button>
+                    <button class="map-ctrl-btn" id="mapShowMaint"><span class="material-icons-round">build</span> Maintenance</button>
+                </div>
+                <div class="full-map-container" id="fullMapContainer">
+                    <svg viewBox="0 0 1000 600" class="map-svg full-map" id="fullCampusMapSVG">
+                        <rect width="1000" height="600" fill="#0a1628" rx="12"/>
+                        <g stroke="#1a2d4a" stroke-width="0.5" opacity="0.2">
+                            <line x1="0" y1="100" x2="1000" y2="100"/>
+                            <line x1="0" y1="200" x2="1000" y2="200"/>
+                            <line x1="0" y1="300" x2="1000" y2="300"/>
+                            <line x1="0" y1="400" x2="1000" y2="400"/>
+                            <line x1="0" y1="500" x2="1000" y2="500"/>
+                            <line x1="200" y1="0" x2="200" y2="600"/>
+                            <line x1="400" y1="0" x2="400" y2="600"/>
+                            <line x1="600" y1="0" x2="600" y2="600"/>
+                            <line x1="800" y1="0" x2="800" y2="600"/>
+                        </g>
+                        <!-- Roads -->
+                        <g stroke="#1e3a5f" stroke-width="4" fill="none" opacity="0.5">
+                            <path d="M50,300 L950,300"/>
+                            <path d="M500,30 L500,570"/>
+                            <path d="M150,120 L850,120"/>
+                            <path d="M150,480 L850,480"/>
+                            <path d="M250,120 L250,480"/>
+                            <path d="M750,120 L750,480"/>
+                            <path d="M250,300 Q400,200 500,300 Q600,400 750,300" stroke-dasharray="8,4"/>
+                        </g>
+                        <!-- Buildings -->
+                        <g class="buildings">
+                            <rect x="120" y="150" width="110" height="70" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="175" y="190" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Library</text>
+                            
+                            <rect x="320" y="50" width="140" height="55" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="390" y="83" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Science Block</text>
+                            
+                            <rect x="560" y="150" width="160" height="70" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="640" y="190" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Engineering</text>
+                            
+                            <rect x="790" y="240" width="110" height="80" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="845" y="285" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Hostel A</text>
+                            
+                            <rect x="120" y="370" width="120" height="80" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="180" y="415" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Sports Complex</text>
+                            
+                            <rect x="370" y="370" width="110" height="70" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="425" y="410" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Cafeteria</text>
+
+                            <rect x="620" y="400" width="130" height="65" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="685" y="438" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Admin Block</text>
+
+                            <rect x="370" y="210" width="85" height="55" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="413" y="242" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Auditorium</text>
+
+                            <rect x="790" y="400" width="100" height="60" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="840" y="435" text-anchor="middle" fill="#4a7a9b" font-size="11" font-family="Inter">Hostel B</text>
+                        </g>
+                        <!-- Dock Stations -->
+                        <g class="dock-stations">
+                            <circle cx="180" cy="250" r="20" fill="none" stroke="#00E5A0" stroke-width="2" opacity="0.3" class="dock-ring pulse-ring"/>
+                            <circle cx="180" cy="250" r="10" fill="#00E5A0" class="dock-point"/>
+                            <text x="180" y="280" text-anchor="middle" fill="#00E5A0" font-size="10" font-family="Inter" font-weight="600">Library 5/8</text>
+                            
+                            <circle cx="640" cy="250" r="20" fill="none" stroke="#00E5A0" stroke-width="2" opacity="0.3" class="dock-ring pulse-ring"/>
+                            <circle cx="640" cy="250" r="10" fill="#00E5A0" class="dock-point"/>
+                            <text x="640" y="280" text-anchor="middle" fill="#00E5A0" font-size="10" font-family="Inter" font-weight="600">Eng. 3/8</text>
+
+                            <circle cx="425" cy="350" r="20" fill="none" stroke="#FFB800" stroke-width="2" opacity="0.3" class="dock-ring pulse-ring"/>
+                            <circle cx="425" cy="350" r="10" fill="#FFB800" class="dock-point"/>
+                            <text x="425" y="380" text-anchor="middle" fill="#FFB800" font-size="10" font-family="Inter" font-weight="600">Café 7/8</text>
+
+                            <circle cx="845" cy="340" r="20" fill="none" stroke="#FF4D6A" stroke-width="2" opacity="0.3" class="dock-ring pulse-ring"/>
+                            <circle cx="845" cy="340" r="10" fill="#FF4D6A" class="dock-point"/>
+                            <text x="845" y="370" text-anchor="middle" fill="#FF4D6A" font-size="10" font-family="Inter" font-weight="600">Hostel 2/10</text>
+
+                            <circle cx="180" cy="470" r="20" fill="none" stroke="#00E5A0" stroke-width="2" opacity="0.3" class="dock-ring pulse-ring"/>
+                            <circle cx="180" cy="470" r="10" fill="#00E5A0" class="dock-point"/>
+                            <text x="180" y="500" text-anchor="middle" fill="#00E5A0" font-size="10" font-family="Inter" font-weight="600">Sports 4/6</text>
+                        </g>
+                        <!-- Active Riders -->
+                        <g class="active-riders">
+                            <circle r="6" fill="#00B4D8" class="rider-dot">
+                                <animateMotion dur="15s" repeatCount="indefinite" path="M300,300 Q400,200 500,250 Q600,300 700,250 Q800,200 700,350 Q600,400 500,350 Q400,300 300,300"/>
+                            </circle>
+                            <circle r="6" fill="#00B4D8" class="rider-dot">
+                                <animateMotion dur="20s" repeatCount="indefinite" path="M200,250 Q300,150 400,200 Q500,250 400,350 Q300,400 200,350 Q150,300 200,250"/>
+                            </circle>
+                            <circle r="6" fill="#00B4D8" class="rider-dot">
+                                <animateMotion dur="18s" repeatCount="indefinite" path="M600,250 Q700,300 800,350 Q750,400 650,380 Q550,350 600,250"/>
+                            </circle>
+                        </g>
+                    </svg>
+                </div>
+                <!-- Map Info Panel -->
+                <div class="map-info-panel" id="mapInfoPanel">
+                    <h3>Station Details</h3>
+                    <p class="hint-text">Click a dock station on the map to view details</p>
+                    <div class="station-detail hidden" id="stationDetail">
+                        <div class="station-name" id="stationName">Library Dock</div>
+                        <div class="station-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-val" id="stationBikes">5</span>
+                                <span class="stat-mini-label">Bikes</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-val" id="stationCapacity">8</span>
+                                <span class="stat-mini-label">Capacity</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-val" id="stationUtilization">63%</span>
+                                <span class="stat-mini-label">Utilization</span>
+                            </div>
+                        </div>
+                        <div class="station-bar-wrap">
+                            <div class="station-bar" id="stationBar" style="width:63%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- FLEET PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-fleet">
+            <div class="fleet-controls">
+                <div class="search-box">
+                    <span class="material-icons-round">search</span>
+                    <input type="text" placeholder="Search bikes by ID, status, location..." id="bikeSearch">
+                </div>
+                <div class="filter-chips">
+                    <button class="chip active" data-filter="all">All (42)</button>
+                    <button class="chip" data-filter="available">Available (21)</button>
+                    <button class="chip" data-filter="in-use">In-Use (18)</button>
+                    <button class="chip" data-filter="maintenance">Maintenance (3)</button>
+                </div>
+            </div>
+            <div class="fleet-table-wrap">
+                <table class="fleet-table" id="fleetTable">
+                    <thead>
+                        <tr>
+                            <th>Bike ID</th>
+                            <th>Status</th>
+                            <th>Battery</th>
+                            <th>Location</th>
+                            <th>Last Activity</th>
+                            <th>Lock</th>
+                            <th>GPS Signal</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fleetTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- TELEMETRY PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-telemetry">
+            <div class="telemetry-grid">
+                <div class="card telemetry-select-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">sensors</span>
+                            Live Ride Telemetry
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <select class="telemetry-bike-select" id="telemetryBikeSelect">
+                            <option value="VS-017">Bike #VS-017 — Active</option>
+                            <option value="VS-022">Bike #VS-022 — Active</option>
+                            <option value="VS-011">Bike #VS-011 — Active</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card telemetry-speed">
+                    <div class="card-body gauge-wrap">
+                        <div class="gauge" id="speedGauge">
+                            <svg viewBox="0 0 200 120" class="gauge-svg">
+                                <path d="M20,110 A80,80 0 0,1 180,110" fill="none" stroke="#1a2d4a" stroke-width="12" stroke-linecap="round"/>
+                                <path d="M20,110 A80,80 0 0,1 180,110" fill="none" stroke="url(#speedGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="125" id="speedArc"/>
+                                <defs>
+                                    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#00E5A0"/>
+                                        <stop offset="100%" stop-color="#00B4D8"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="gauge-value"><span id="speedValue">14.2</span><small>km/h</small></div>
+                            <div class="gauge-label">Speed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-distance">
+                    <div class="card-body telemetry-metric">
+                        <span class="material-icons-round metric-icon">straighten</span>
+                        <div class="metric-value" id="distanceValue">2.8</div>
+                        <div class="metric-unit">km</div>
+                        <div class="metric-label">Distance</div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-duration">
+                    <div class="card-body telemetry-metric">
+                        <span class="material-icons-round metric-icon">timer</span>
+                        <div class="metric-value" id="durationValue">23:14</div>
+                        <div class="metric-unit">min:sec</div>
+                        <div class="metric-label">Duration</div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-battery">
+                    <div class="card-body telemetry-metric">
+                        <span class="material-icons-round metric-icon">battery_charging_full</span>
+                        <div class="metric-value" id="batteryValue">78</div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-label">Battery</div>
+                        <div class="battery-bar-wrap">
+                            <div class="battery-bar" id="batteryBar" style="width:78%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-gps">
+                    <div class="card-body telemetry-metric">
+                        <span class="material-icons-round metric-icon">gps_fixed</span>
+                        <div class="metric-value gps-strong" id="gpsValue">Strong</div>
+                        <div class="metric-unit">4/4 sats</div>
+                        <div class="metric-label">GPS Signal</div>
+                    </div>
+                </div>
+
+                <div class="card telemetry-route-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">route</span>
+                            Ride Route
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <svg viewBox="0 0 500 250" class="route-svg" id="routeMap">
+                            <rect width="500" height="250" fill="#0a1628" rx="8"/>
+                            <g stroke="#1a2d4a" stroke-width="0.5" opacity="0.2">
+                                <line x1="0" y1="50" x2="500" y2="50"/>
+                                <line x1="0" y1="100" x2="500" y2="100"/>
+                                <line x1="0" y1="150" x2="500" y2="150"/>
+                                <line x1="0" y1="200" x2="500" y2="200"/>
+                                <line x1="100" y1="0" x2="100" y2="250"/>
+                                <line x1="200" y1="0" x2="200" y2="250"/>
+                                <line x1="300" y1="0" x2="300" y2="250"/>
+                                <line x1="400" y1="0" x2="400" y2="250"/>
+                            </g>
+                            <!-- Route path -->
+                            <path d="M50,200 Q100,180 150,150 Q200,120 250,100 Q300,80 350,110 Q400,140 450,120" fill="none" stroke="#00E5A0" stroke-width="3" stroke-linecap="round" stroke-dasharray="600" stroke-dashoffset="600" class="route-path"/>
+                            <!-- Start dot -->
+                            <circle cx="50" cy="200" r="6" fill="#00E5A0"/>
+                            <text x="50" y="220" text-anchor="middle" fill="#00E5A0" font-size="9" font-family="Inter">Start</text>
+                            <!-- Current position -->
+                            <circle cx="450" cy="120" r="8" fill="#00B4D8" class="rider-dot">
+                                <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <text x="450" y="105" text-anchor="middle" fill="#00B4D8" font-size="9" font-family="Inter">Current</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- REBALANCE PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-rebalance">
+            <div class="rebalance-dashboard">
+                <div class="card rebalance-overview-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">swap_horiz</span>
+                            Rebalancing Intelligence
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="rebalance-kpi-row">
+                            <div class="rebalance-kpi">
+                                <span class="rkpi-val">3</span>
+                                <span class="rkpi-label">Pending Moves</span>
+                            </div>
+                            <div class="rebalance-kpi">
+                                <span class="rkpi-val">12</span>
+                                <span class="rkpi-label">Completed Today</span>
+                            </div>
+                            <div class="rebalance-kpi">
+                                <span class="rkpi-val">94%</span>
+                                <span class="rkpi-label">Balance Score</span>
+                            </div>
+                            <div class="rebalance-kpi">
+                                <span class="rkpi-val">+150</span>
+                                <span class="rkpi-label">Karma Distributed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rebalance-station-list-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">ev_station</span>
+                            Station Status
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="station-status-grid" id="stationStatusGrid">
+                            <div class="station-card" data-fill="63">
+                                <div class="station-icon-wrap"><span class="material-icons-round">menu_book</span></div>
+                                <h4>Library Dock</h4>
+                                <div class="station-bar-mini-wrap"><div class="station-bar-mini" style="width:63%"></div></div>
+                                <span class="station-count">5 / 8 bikes</span>
+                                <span class="station-status-tag ok">Balanced</span>
+                            </div>
+                            <div class="station-card" data-fill="38">
+                                <div class="station-icon-wrap"><span class="material-icons-round">engineering</span></div>
+                                <h4>Engineering Dock</h4>
+                                <div class="station-bar-mini-wrap"><div class="station-bar-mini low" style="width:38%"></div></div>
+                                <span class="station-count">3 / 8 bikes</span>
+                                <span class="station-status-tag warn">Needs Bikes</span>
+                            </div>
+                            <div class="station-card" data-fill="88">
+                                <div class="station-icon-wrap"><span class="material-icons-round">restaurant</span></div>
+                                <h4>Café Dock</h4>
+                                <div class="station-bar-mini-wrap"><div class="station-bar-mini high" style="width:88%"></div></div>
+                                <span class="station-count">7 / 8 bikes</span>
+                                <span class="station-status-tag danger">Overflow Risk</span>
+                            </div>
+                            <div class="station-card" data-fill="20">
+                                <div class="station-icon-wrap"><span class="material-icons-round">hotel</span></div>
+                                <h4>Hostel Dock</h4>
+                                <div class="station-bar-mini-wrap"><div class="station-bar-mini critical" style="width:20%"></div></div>
+                                <span class="station-count">2 / 10 bikes</span>
+                                <span class="station-status-tag danger">Critical Low</span>
+                            </div>
+                            <div class="station-card" data-fill="67">
+                                <div class="station-icon-wrap"><span class="material-icons-round">sports_soccer</span></div>
+                                <h4>Sports Dock</h4>
+                                <div class="station-bar-mini-wrap"><div class="station-bar-mini" style="width:67%"></div></div>
+                                <span class="station-count">4 / 6 bikes</span>
+                                <span class="station-status-tag ok">Balanced</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card rebalance-karma-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">auto_awesome</span>
+                            Karma Bounties
+                        </h2>
+                        <span class="badge-count">Active Bounties</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="karma-list">
+                            <div class="karma-item">
+                                <div class="karma-points">+50 pts</div>
+                                <div class="karma-desc">
+                                    <strong>Move a bike from Café → Hostel</strong>
+                                    <small>3 bikes need to move • Estimated: 8 min walk</small>
+                                </div>
+                                <button class="btn-karma" onclick="claimBounty(this)">Claim</button>
+                            </div>
+                            <div class="karma-item">
+                                <div class="karma-points">+30 pts</div>
+                                <div class="karma-desc">
+                                    <strong>Move a bike from Library → Engineering</strong>
+                                    <small>2 bikes need to move • Estimated: 5 min walk</small>
+                                </div>
+                                <button class="btn-karma" onclick="claimBounty(this)">Claim</button>
+                            </div>
+                            <div class="karma-item">
+                                <div class="karma-points">+20 pts</div>
+                                <div class="karma-desc">
+                                    <strong>Report bike condition at Sports Dock</strong>
+                                    <small>Quick inspection needed • Estimated: 3 min</small>
+                                </div>
+                                <button class="btn-karma" onclick="claimBounty(this)">Claim</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- ANALYTICS PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-analytics">
+            <div class="analytics-grid">
+                <div class="card analytics-rides-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">bar_chart</span>
+                            Daily Rides
+                        </h2>
+                        <select class="time-select" id="analyticsPeriod">
+                            <option value="7d" selected>Last 7 Days</option>
+                            <option value="30d">Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="dailyRidesChart" height="250"></canvas>
+                    </div>
+                </div>
+                <div class="card analytics-peak-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">schedule</span>
+                            Peak Hours
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="peak-heatmap" id="peakHeatmap">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card analytics-summary-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">insights</span>
+                            Summary Stats
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-stats">
+                            <div class="summary-stat">
+                                <div class="summary-val">1,247</div>
+                                <div class="summary-label">Total Rides (Week)</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-val">4.2 km</div>
+                                <div class="summary-label">Avg Distance</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-val">18 min</div>
+                                <div class="summary-label">Avg Duration</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-val">98.3%</div>
+                                <div class="summary-label">Lock Success Rate</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-val">87%</div>
+                                <div class="summary-label">GPS Accuracy</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-val">214</div>
+                                <div class="summary-label">Unique Riders</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card analytics-top-routes">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="material-icons-round">route</span>
+                            Top Routes
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="top-routes-list">
+                            <div class="top-route">
+                                <span class="route-rank">#1</span>
+                                <div class="route-info">
+                                    <strong>Hostel A → Library</strong>
+                                    <small>312 rides this week</small>
+                                </div>
+                                <div class="route-bar-track"><div class="route-bar-fill" style="width:100%"></div></div>
+                            </div>
+                            <div class="top-route">
+                                <span class="route-rank">#2</span>
+                                <div class="route-info">
+                                    <strong>Library → Engineering</strong>
+                                    <small>256 rides this week</small>
+                                </div>
+                                <div class="route-bar-track"><div class="route-bar-fill" style="width:82%"></div></div>
+                            </div>
+                            <div class="top-route">
+                                <span class="route-rank">#3</span>
+                                <div class="route-info">
+                                    <strong>Cafeteria → Hostel A</strong>
+                                    <small>198 rides this week</small>
+                                </div>
+                                <div class="route-bar-track"><div class="route-bar-fill" style="width:63%"></div></div>
+                            </div>
+                            <div class="top-route">
+                                <span class="route-rank">#4</span>
+                                <div class="route-info">
+                                    <strong>Sports → Cafeteria</strong>
+                                    <small>147 rides this week</small>
+                                </div>
+                                <div class="route-bar-track"><div class="route-bar-fill" style="width:47%"></div></div>
+                            </div>
+                            <div class="top-route">
+                                <span class="route-rank">#5</span>
+                                <div class="route-info">
+                                    <strong>Engineering → Admin</strong>
+                                    <small>89 rides this week</small>
+                                </div>
+                                <div class="route-bar-track"><div class="route-bar-fill" style="width:29%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ============================================ -->
+        <!-- RIDE HISTORY PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-history">
+            <div class="fleet-controls">
+                <div class="search-box">
+                    <span class="material-icons-round">search</span>
+                    <input type="text" placeholder="Search rides by bike, rider, route..." id="historySearch">
+                </div>
+                <div class="hist-chips" id="historyChips">
+                    <button class="chip active" data-hfilter="all">All Rides</button>
+                    <button class="chip" data-hfilter="ok">Completed</button>
+                    <button class="chip" data-hfilter="weak">Weak-signal</button>
+                    <button class="chip" data-hfilter="flag">Flagged</button>
+                </div>
+                <button class="btn-export" id="exportHistoryBtn">
+                    <span class="material-icons-round">download</span> Export CSV
+                </button>
+            </div>
+            <div class="history-summary" id="historySummary"></div>
+            <div class="fleet-table-wrap">
+                <table class="fleet-table">
+                    <thead>
+                        <tr>
+                            <th>Ride</th>
+                            <th>Bike</th>
+                            <th>Rider</th>
+                            <th>Route</th>
+                            <th>Started</th>
+                            <th>Duration</th>
+                            <th>Distance</th>
+                            <th>GPS Fixes</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- 5-BIKE PROTOTYPE PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-prototype">
+            <div class="proto-banner">
+                <div>
+                    <span class="proto-tag">HARDWARE PROTOTYPE</span>
+                    <h2>5-Bike Smart-Lock Pilot</h2>
+                    <p>ESP32 + NEO-6M GPS + servo lock per bike. Unlock from the app (BLE / NFC), live position over campus Wi-Fi, store-and-forward when the signal drops.</p>
+                </div>
+                <div class="proto-banner-stats">
+                    <div><strong id="protoOnline">5/5</strong><span>Online</span></div>
+                    <div><strong id="protoRiding">0</strong><span>Riding</span></div>
+                    <div><strong>₹1,140</strong><span>Cost / bike</span></div>
+                </div>
+            </div>
+
+            <div class="proto-grid">
+                <div class="card proto-map-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="material-icons-round">my_location</span> Live Position</h2>
+                        <span class="badge-count" id="protoMapTime">GPS • 1 Hz</span>
+                    </div>
+                    <div class="card-body">
+                        <svg viewBox="0 0 600 340" class="proto-map" id="protoMapSVG">
+                            <rect width="600" height="340" rx="10" fill="#0a1628"/>
+                            <g stroke="#1e3a5f" stroke-width="5" fill="none" opacity="0.55">
+                                <path d="M40,170 L560,170"/><path d="M300,20 L300,320"/>
+                                <path d="M100,70 L500,70"/><path d="M100,270 L500,270"/>
+                                <path d="M100,70 L100,270"/><path d="M500,70 L500,270"/>
+                            </g>
+                            <rect x="320" y="85" width="90" height="60" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="365" y="120" text-anchor="middle" fill="#4a7a9b" font-size="10" font-family="Inter">Library</text>
+                            <rect x="130" y="190" width="100" height="60" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="180" y="225" text-anchor="middle" fill="#4a7a9b" font-size="10" font-family="Inter">Hostel</text>
+                            <rect x="400" y="195" width="80" height="55" rx="6" fill="#162640" stroke="#2a4a6b"/>
+                            <text x="440" y="226" text-anchor="middle" fill="#4a7a9b" font-size="10" font-family="Inter">Canteen</text>
+                            <!-- weak signal zone -->
+                            <ellipse cx="180" cy="120" rx="70" ry="38" fill="rgba(255,77,106,0.08)" stroke="#FF4D6A" stroke-dasharray="4 4" opacity="0.7"/>
+                            <text x="180" y="124" text-anchor="middle" fill="#FF4D6A" font-size="9" font-family="Inter" opacity="0.9">Tree-cover / poor GPS</text>
+                            <g id="protoDocks">
+                                <circle cx="300" cy="170" r="9" fill="#00E5A0"/><text x="300" y="192" text-anchor="middle" fill="#00E5A0" font-size="9" font-family="Inter" font-weight="600">Main Hub</text>
+                                <circle cx="100" cy="170" r="9" fill="#00E5A0"/><text x="100" y="192" text-anchor="middle" fill="#00E5A0" font-size="9" font-family="Inter" font-weight="600">Hostel Dock</text>
+                                <circle cx="500" cy="170" r="9" fill="#FFB800"/><text x="500" y="192" text-anchor="middle" fill="#FFB800" font-size="9" font-family="Inter" font-weight="600">Library Dock</text>
+                            </g>
+                            <g id="protoBikeMarkers"></g>
+                        </svg>
+                        <div class="proto-legend">
+                            <span><i class="lg lg-lock"></i> Locked</span>
+                            <span><i class="lg lg-ride"></i> Riding</span>
+                            <span><i class="lg lg-weak"></i> Last-known (no fix)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card proto-bikes-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="material-icons-round">lock_open</span> App Unlock · Pilot Bikes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="proto-bike-list" id="protoBikeList"></div>
+                    </div>
+                </div>
+
+                <div class="card proto-log-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="material-icons-round">terminal</span> Device Event Log</h2>
+                        <span class="badge-count">MQTT</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="proto-log" id="protoLog"></div>
+                    </div>
+                </div>
+
+                <div class="card proto-rel-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="material-icons-round">verified</span> Reliability Tests</h2>
+                        <button class="btn-export" id="runStressBtn"><span class="material-icons-round">play_arrow</span> Run Stress Test</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="sample-note">Illustrative sample data — replace with your measured results from the hardware test runs.</div>
+                        <div class="rel-metrics">
+                            <div class="rel-metric"><div class="rel-val" id="relCycles">120</div><div class="rel-label">Lock / unlock cycles</div></div>
+                            <div class="rel-metric"><div class="rel-val" id="relLock">99.2%</div><div class="rel-label">Lock success</div></div>
+                            <div class="rel-metric"><div class="rel-val" id="relFix">96.4%</div><div class="rel-label">GPS fix rate</div></div>
+                            <div class="rel-metric"><div class="rel-val" id="relSync">100%</div><div class="rel-label">Data recovered after dropout</div></div>
+                        </div>
+                        <div class="rel-bar-block" id="relProgressBlock">
+                            <div class="rel-bar-label"><span id="relStatus">Idle — last run: 5 bikes × 24 rides</span><span id="relPct">100%</span></div>
+                            <div class="rel-bar-track"><div class="rel-bar-fill" id="relBarFill" style="width:100%"></div></div>
+                        </div>
+                        <table class="fleet-table rel-table">
+                            <thead><tr><th>Environment</th><th>Rides</th><th>GPS fix</th><th>Lock OK</th><th>Result</th></tr></thead>
+                            <tbody>
+                                <tr><td>Open ground</td><td>40</td><td>99%</td><td>100%</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>Tree cover</td><td>30</td><td>94%</td><td>99%</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>Between buildings</td><td>30</td><td>91%</td><td>98%</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>Indoor / parking (no fix)</td><td>20</td><td>0%*</td><td>99%</td><td><span class="status-badge in-use">Buffered</span></td></tr>
+                            </tbody>
+                        </table>
+                        <p class="rel-note">* No fix → device logs last-known coordinates and buffers up to 500 fixes in flash; all were uploaded on reconnect.</p>
+                    </div>
+                </div>
+
+                <div class="card proto-bom-card">
+                    <div class="card-header">
+                        <h2 class="card-title"><span class="material-icons-round">payments</span> Low-Cost BOM (per bike)</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="bom-list">
+                            <li><span>ESP32 DevKit (Wi-Fi + BLE)</span><b>₹450</b></li>
+                            <li><span>NEO-6M GPS module</span><b>₹320</b></li>
+                            <li><span>SG90 servo (lock latch)</span><b>₹90</b></li>
+                            <li><span>MFRC522 NFC/RFID reader</span><b>₹70</b></li>
+                            <li><span>Reed switch + buzzer</span><b>₹30</b></li>
+                            <li><span>18650 cell + TP4056 + boost</span><b>₹180</b></li>
+                            <li class="bom-total"><span>Total</span><b>₹1,140</b></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- DOCS & TESTS PAGE -->
+        <!-- ============================================ -->
+        <section class="page" id="page-docs">
+            <div class="docs-tabs" id="docsTabs">
+                <button class="chip active" data-doc="design">System Design</button>
+                <button class="chip" data-doc="wiring">Wiring Diagram</button>
+                <button class="chip" data-doc="setup">Setup &amp; User Guide</button>
+                <button class="chip" data-doc="tests">Test Report</button>
+                <button class="chip" data-doc="fair">Fair Use</button>
+            </div>
+
+            <div class="doc-panel active" id="doc-design">
+                <div class="card">
+                    <div class="card-header"><h2 class="card-title"><span class="material-icons-round">account_tree</span> System Architecture &amp; Data Flow</h2></div>
+                    <div class="card-body">
+                        <svg viewBox="0 0 960 330" class="doc-svg" role="img" aria-label="Data flow diagram">
+                            <defs>
+                                <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#00E5A0"/></marker>
+                                <marker id="arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#00B4D8"/></marker>
+                            </defs>
+                            <g font-family="Inter" font-size="12" text-anchor="middle">
+                                <rect x="20" y="30" width="150" height="70" rx="10" fill="#141b2d" stroke="#00E5A0"/><text x="95" y="60" fill="#F1F5F9" font-weight="700">Student App</text><text x="95" y="80" fill="#94A3B8" font-size="10">BLE unlock · QR / NFC</text>
+                                <rect x="20" y="230" width="150" height="70" rx="10" fill="#141b2d" stroke="#FFB800"/><text x="95" y="260" fill="#F1F5F9" font-weight="700">Admin Dashboard</text><text x="95" y="280" fill="#94A3B8" font-size="10">Map · history · moves</text>
+                                <rect x="270" y="125" width="170" height="80" rx="10" fill="#141b2d" stroke="#00B4D8"/><text x="355" y="157" fill="#F1F5F9" font-weight="700">Campus Gateway</text><text x="355" y="177" fill="#94A3B8" font-size="10">Wi-Fi AP · MQTT broker</text>
+                                <rect x="540" y="30" width="170" height="70" rx="10" fill="#141b2d" stroke="#A855F7"/><text x="625" y="60" fill="#F1F5F9" font-weight="700">Backend API</text><text x="625" y="80" fill="#94A3B8" font-size="10">Auth · unlock tokens</text>
+                                <rect x="540" y="230" width="170" height="70" rx="10" fill="#141b2d" stroke="#A855F7"/><text x="625" y="260" fill="#F1F5F9" font-weight="700">Database</text><text x="625" y="280" fill="#94A3B8" font-size="10">Positions · rides · karma</text>
+                                <rect x="790" y="125" width="150" height="80" rx="10" fill="#141b2d" stroke="#00E5A0"/><text x="865" y="157" fill="#F1F5F9" font-weight="700">Bike Node ×5</text><text x="865" y="177" fill="#94A3B8" font-size="10">ESP32 · GPS · servo lock</text>
+                            </g>
+                            <g stroke-width="2" fill="none">
+                                <path d="M170,65 C230,65 220,150 270,150" stroke="#00E5A0" marker-end="url(#arr)"/>
+                                <path d="M440,150 C490,150 490,65 540,65" stroke="#00E5A0" marker-end="url(#arr)"/>
+                                <path d="M710,65 C760,65 760,150 790,150" stroke="#00E5A0" marker-end="url(#arr)"/>
+                                <path d="M790,185 L442,185" stroke="#00B4D8" marker-end="url(#arr2)" stroke-dasharray="6 4"/>
+                                <path d="M625,100 L625,228" stroke="#00B4D8" marker-end="url(#arr2)" stroke-dasharray="6 4"/>
+                                <path d="M540,255 C300,255 250,265 170,265" stroke="#FFB800" marker-end="url(#arr)"/>
+                            </g>
+                            <g font-family="Inter" font-size="10" fill="#94A3B8">
+                                <text x="190" y="55">1 unlock req</text>
+                                <text x="440" y="115">2 verify + token</text>
+                                <text x="790" y="85">3 unlock cmd</text>
+                                <text x="540" y="176">4 telemetry (GPS + lock)</text>
+                                <text x="632" y="170" text-anchor="start">5 store</text>
+                                <text x="330" y="292">6 live view / suggested moves</text>
+                            </g>
+                        </svg>
+                        <div class="doc-points">
+                            <div><b>Edge:</b> each bike runs an ESP32 firmware state machine (LOCKED → UNLOCKING → RIDING → LOCKING) and publishes <code>bike/{id}/telemetry</code> every second.</div>
+                            <div><b>Offline-first:</b> fixes are appended to a 500-entry flash ring buffer when Wi-Fi/GPS is lost and flushed in order on reconnect.</div>
+                            <div><b>Rebalancing:</b> a scheduled job compares dock fill vs. predicted demand and emits ranked move suggestions shown on the Rebalance tab.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-panel" id="doc-wiring">
+                <div class="card">
+                    <div class="card-header"><h2 class="card-title"><span class="material-icons-round">electrical_services</span> Bike Node Wiring (ESP32)</h2></div>
+                    <div class="card-body doc-wiring-body">
+                        <svg viewBox="0 0 620 400" class="doc-svg wiring-svg" role="img" aria-label="Wiring diagram">
+                            <g font-family="Inter" font-size="11" text-anchor="middle">
+                                <rect x="230" y="40" width="160" height="320" rx="12" fill="#141b2d" stroke="#00B4D8" stroke-width="2"/>
+                                <text x="310" y="68" fill="#00B4D8" font-weight="700">ESP32 DevKit</text>
+                                <rect x="20" y="40" width="130" height="62" rx="8" fill="#141b2d" stroke="#00E5A0"/><text x="85" y="66" fill="#F1F5F9" font-weight="700">NEO-6M GPS</text><text x="85" y="84" fill="#94A3B8" font-size="9">TX→16 · RX→17</text>
+                                <rect x="20" y="130" width="130" height="62" rx="8" fill="#141b2d" stroke="#00E5A0"/><text x="85" y="156" fill="#F1F5F9" font-weight="700">MFRC522 NFC</text><text x="85" y="174" fill="#94A3B8" font-size="9">SS5 SCK18 MOSI23 MISO19</text>
+                                <rect x="20" y="220" width="130" height="62" rx="8" fill="#141b2d" stroke="#FFB800"/><text x="85" y="246" fill="#F1F5F9" font-weight="700">Reed switch</text><text x="85" y="264" fill="#94A3B8" font-size="9">Lock sense → GPIO27</text>
+                                <rect x="20" y="310" width="130" height="62" rx="8" fill="#141b2d" stroke="#FFB800"/><text x="85" y="336" fill="#F1F5F9" font-weight="700">Buzzer</text><text x="85" y="354" fill="#94A3B8" font-size="9">GPIO25</text>
+                                <rect x="470" y="40" width="130" height="62" rx="8" fill="#141b2d" stroke="#FF4D6A"/><text x="535" y="66" fill="#F1F5F9" font-weight="700">SG90 Servo</text><text x="535" y="84" fill="#94A3B8" font-size="9">Signal → GPIO13 · 5V</text>
+                                <rect x="470" y="150" width="130" height="62" rx="8" fill="#141b2d" stroke="#A855F7"/><text x="535" y="176" fill="#F1F5F9" font-weight="700">Battery sense</text><text x="535" y="194" fill="#94A3B8" font-size="9">100k/100k → GPIO34</text>
+                                <rect x="470" y="270" width="130" height="90" rx="8" fill="#141b2d" stroke="#A855F7"/><text x="535" y="296" fill="#F1F5F9" font-weight="700">18650 + TP4056</text><text x="535" y="314" fill="#94A3B8" font-size="9">+ MT3608 boost</text><text x="535" y="330" fill="#94A3B8" font-size="9">5V → VIN / servo</text>
+                            </g>
+                            <g stroke-width="2" fill="none" stroke-linecap="round">
+                                <path d="M150,71 H230" stroke="#00E5A0"/><path d="M150,161 H230" stroke="#00E5A0"/>
+                                <path d="M150,251 H230" stroke="#FFB800"/><path d="M150,341 H230" stroke="#FFB800"/>
+                                <path d="M390,71 H470" stroke="#FF4D6A"/><path d="M390,181 H470" stroke="#A855F7"/>
+                                <path d="M390,315 H470" stroke="#A855F7"/>
+                            </g>
+                        </svg>
+                        <table class="fleet-table pin-table">
+                            <thead><tr><th>Module</th><th>Pin</th><th>ESP32</th></tr></thead>
+                            <tbody>
+                                <tr><td>NEO-6M</td><td>TX / RX</td><td>GPIO16 / GPIO17 (UART2)</td></tr>
+                                <tr><td>MFRC522</td><td>SS · SCK · MOSI · MISO · RST</td><td>5 · 18 · 23 · 19 · 22</td></tr>
+                                <tr><td>SG90</td><td>Signal</td><td>GPIO13 (PWM)</td></tr>
+                                <tr><td>Reed switch</td><td>Out</td><td>GPIO27 (INPUT_PULLUP)</td></tr>
+                                <tr><td>Buzzer</td><td>+</td><td>GPIO25</td></tr>
+                                <tr><td>Battery divider</td><td>Mid</td><td>GPIO34 (ADC)</td></tr>
+                                <tr><td>Power</td><td>5V / 3V3 / GND</td><td>VIN / 3V3 / GND</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-panel" id="doc-setup">
+                <div class="docs-two-col">
+                    <div class="card">
+                        <div class="card-header"><h2 class="card-title"><span class="material-icons-round">build</span> Setup Guide</h2></div>
+                        <div class="card-body">
+                            <ol class="step-list">
+                                <li><b>Assemble</b> each bike node using the wiring diagram; mount the servo latch on the frame lock bracket.</li>
+                                <li><b>Flash firmware</b> via Arduino IDE / PlatformIO; set <code>BIKE_ID</code>, Wi-Fi SSID and MQTT host in <code>config.h</code>.</li>
+                                <li><b>Start gateway</b>: run Mosquitto on the campus Raspberry Pi and connect it to the backend.</li>
+                                <li><b>Open this dashboard</b>: <code>python3 -m http.server 8080</code> then visit <code>localhost:8080</code>.</li>
+                                <li><b>Register bikes</b> PB-01…PB-05 and place them at the Main Hub dock.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h2 class="card-title"><span class="material-icons-round">person</span> User Guide</h2></div>
+                        <div class="card-body">
+                            <ol class="step-list">
+                                <li><b>Find</b> a nearby bike on the map (green = available).</li>
+                                <li><b>Unlock</b> with the app (BLE) or tap your student ID on the bike's NFC reader.</li>
+                                <li><b>Ride</b> — position streams live; leaving the campus geofence sounds the alert.</li>
+                                <li><b>Return</b> to any dock and push the latch; the servo locks and the ride ends automatically.</li>
+                                <li><b>Earn karma</b> by returning bikes to low-stock docks.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-panel" id="doc-tests">
+                <div class="card">
+                    <div class="card-header"><h2 class="card-title"><span class="material-icons-round">fact_check</span> Test Report</h2></div>
+                    <div class="card-body">
+                        <div class="sample-note">Template with illustrative values — update the Observed column with real measurements before submission.</div>
+                        <table class="fleet-table">
+                            <thead><tr><th>ID</th><th>Test</th><th>Method</th><th>Expected</th><th>Observed</th><th>Result</th></tr></thead>
+                            <tbody>
+                                <tr><td>T1</td><td>App unlock latency</td><td>120 BLE unlocks</td><td>&lt; 2 s</td><td>1.3 s avg</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T2</td><td>Lock reliability</td><td>120 lock/unlock cycles, 5 bikes</td><td>≥ 98%</td><td>99.2%</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T3</td><td>GPS accuracy</td><td>Fixed 20-point route</td><td>≤ 10 m</td><td>4.8 m median</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T4</td><td>Poor-signal operation</td><td>Tree cover / building canyon</td><td>≥ 90% fixes</td><td>91–94%</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T5</td><td>Offline buffering</td><td>Wi-Fi off for 10 min mid-ride</td><td>No lost points</td><td>0 lost</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T6</td><td>Battery life</td><td>Continuous ride mode</td><td>≥ 8 h</td><td>9.4 h</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T7</td><td>Tamper alert</td><td>Forced lock movement</td><td>Alert &lt; 5 s</td><td>2.1 s</td><td><span class="status-badge available">Pass</span></td></tr>
+                                <tr><td>T8</td><td>Repeated-ride soak</td><td>5 bikes × 24 rides</td><td>No resets</td><td>1 brown-out (fixed)</td><td><span class="status-badge in-use">Fixed</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-panel" id="doc-fair">
+                <div class="card">
+                    <div class="card-header"><h2 class="card-title"><span class="material-icons-round">balance</span> Fair Use Without Payment Infrastructure</h2></div>
+                    <div class="card-body">
+                        <div class="fair-grid">
+                            <div class="fair-item"><span class="material-icons-round">badge</span><b>Student-ID identity</b><p>Unlock requires a registered ID, so every ride is attributable.</p></div>
+                            <div class="fair-item"><span class="material-icons-round">timer</span><b>Free-minute quota</b><p>60 free minutes per day; longer holds consume karma points.</p></div>
+                            <div class="fair-item"><span class="material-icons-round">stars</span><b>Karma credits</b><p>Earn points by moving bikes to under-stocked docks.</p></div>
+                            <div class="fair-item"><span class="material-icons-round">gpp_maybe</span><b>Geofence &amp; strikes</b><p>Leaving campus or abandoning bikes adds strikes and pauses unlock rights.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notif-header">
+            <h3>Notifications</h3>
+            <button class="notif-close" id="notifClose"><span class="material-icons-round">close</span></button>
+        </div>
+        <div class="notif-list">
+            <div class="notif-item unread">
+                <span class="material-icons-round notif-icon warning">warning</span>
+                <div class="notif-content">
+                    <strong>Hostel Dock critically low</strong>
+                    <small>Only 2 bikes remaining — high demand expected at 6 PM</small>
+                    <span class="notif-time">5 min ago</span>
+                </div>
+            </div>
+            <div class="notif-item unread">
+                <span class="material-icons-round notif-icon success">check_circle</span>
+                <div class="notif-content">
+                    <strong>Rebalance completed</strong>
+                    <small>2 bikes moved from Admin → Hostel successfully</small>
+                    <span class="notif-time">20 min ago</span>
+                </div>
+            </div>
+            <div class="notif-item unread">
+                <span class="material-icons-round notif-icon info">info</span>
+                <div class="notif-content">
+                    <strong>GPS module updated</strong>
+                    <small>Bike #VS-031 GPS firmware updated remotely</small>
+                    <span class="notif-time">1 hr ago</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NFC Unlock Simulation Modal -->
+    <div class="modal-overlay" id="nfcModal">
+        <div class="modal nfc-modal">
+            <button class="modal-close" onclick="closeNFCModal()"><span class="material-icons-round">close</span></button>
+            <div class="nfc-animation" id="nfcAnimation">
+                <div class="nfc-ring ring-1"></div>
+                <div class="nfc-ring ring-2"></div>
+                <div class="nfc-ring ring-3"></div>
+                <span class="material-icons-round nfc-icon">nfc</span>
+            </div>
+            <h2 class="nfc-title" id="nfcTitle">Tap to Unlock</h2>
+            <p class="nfc-subtitle" id="nfcSubtitle">Hold your student ID near the bike's NFC reader</p>
+            <div class="nfc-bike-id" id="nfcBikeId">Bike #VS-017</div>
+            <button class="btn-nfc-simulate" id="nfcSimulateBtn" onclick="simulateNFCUnlock()">Simulate NFC Tap</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
